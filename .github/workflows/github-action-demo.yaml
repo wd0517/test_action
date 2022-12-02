@@ -1,13 +1,10 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: Build Docker Image CI
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,3 +21,17 @@ jobs:
         cache-dependency-path: frontend/package-lock.json
     - run: cd frontend/ && npm ci
     - run: cd frontend/ && npm run build --if-present
+
+    - name: Login to Docker Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
+        username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+    - name: Build the Docker image and Push
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}/pingcap-ee/www-website-portal:${{ runner.os }}-${{ github.sha }}
