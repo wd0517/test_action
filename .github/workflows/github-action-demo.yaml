@@ -41,4 +41,4 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}/pingcap-ee/www-website-portal:${{ runner.os }}-${{ github.sha }}
+        tags: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}/pingcap-ee/www-website-portal:${{ github.sha }}
